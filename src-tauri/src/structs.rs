@@ -5,7 +5,7 @@ use sqlx::prelude::FromRow;
 pub struct ResType {
     id: Option<String>,
     name: String,
- }
+}
 
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Res {
@@ -14,7 +14,6 @@ pub struct Res {
     aid: String,
     num: u32,
 }
-
 
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Activity {

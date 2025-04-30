@@ -1,6 +1,6 @@
 export interface Activity {
-    id: number
+    id: string
     name: string
-    cost: number
-    total_cost: number
+    num: number
+    consume: number
 }

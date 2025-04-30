@@ -1,8 +1,8 @@
 <template>
     <el-container>
         <el-header>添加掉落物类型</el-header>
-        <el-main>
-            <el-form v-if="formLabelAlign" :label-position="labelPosition" label-width="auto" :model="formLabelAlign"
+        <el-main v-if="formLabelAlign">
+            <el-form :label-position="labelPosition" label-width="auto" :model="formLabelAlign"
                 style="max-width: 600px">
                 <el-form-item label="排布" :label-position="itemLabelPosition">
                     <el-radio-group v-model="itemLabelPosition" aria-label="item label position">
@@ -13,17 +13,16 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="活动" :label-position="itemLabelPosition">
-                    <el-input v-model="formLabelAlign.activity" />
+                    <el-select v-model="formLabelAlign.activity" placeholder="活动" style="width: 240px">
+                        <el-option v-for="(item, index) in activity" :key="index" :label="item.name" :value="item.id" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="名称" :label-position="itemLabelPosition">
                     <el-input v-model="formLabelAlign.name" />
                 </el-form-item>
-                <el-form-item label="数量" :label-position="itemLabelPosition">
-                    <el-input-number v-model="formLabelAlign.num" />
-                </el-form-item>
             </el-form>
-            <el-form v-else></el-form>
         </el-main>
+        <el-main v-else></el-main>
     </el-container>
 </template>
 
@@ -31,15 +30,23 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { invoke } from "@tauri-apps/api/core"
-import type { FormItemProps, FormProps } from 'element-plus'
+import { ElMessage, type FormItemProps, type FormProps } from 'element-plus'
+import { Activity } from "../stores/type"
+import { onMounted } from "vue"
 
-const greetMsg = ref("")
-const name = ref("")
-
-async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsg.value = await invoke("greet", { name: name.value })
+const activity = ref<Activity[]>([])
+const get_activity = () => {
+    invoke("get_activity")
+        .then((res) => {
+            activity.value = res as Activity[]
+        })
+        .catch((err) => {
+            const msg = err as string
+            ElMessage.error({ message: msg })
+            activity.value = []
+        })
 }
+
 
 const labelPosition = ref<FormProps['labelPosition']>('right')
 const itemLabelPosition = ref<FormItemProps['labelPosition']>('right')
@@ -54,4 +61,9 @@ interface Form {
     num: number
     activity: string
 }
+
+
+onMounted(() => {
+    get_activity()
+})
 </script>

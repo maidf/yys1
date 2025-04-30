@@ -1,9 +1,8 @@
 <template>
     <el-container>
-        <el-header>添加活动</el-header>
-        <el-main v-if="formLabelAlign">
-            <el-form :label-position="labelPosition" label-width="auto" :model="formLabelAlign"
-                style="max-width: 600px">
+        <el-header>添加物品类型</el-header>
+        <el-main>
+            <el-form :label-position="labelPosition" label-width="auto" style="max-width: 600px">
                 <el-form-item label="排布" :label-position="itemLabelPosition">
                     <el-radio-group v-model="itemLabelPosition" aria-label="item label position">
                         <el-radio-button value="">Empty</el-radio-button>
@@ -13,17 +12,13 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="名称" :label-position="itemLabelPosition">
-                    <el-input v-model="formLabelAlign.name" />
-                </el-form-item>
-                <el-form-item label="消耗" :label-position="itemLabelPosition">
-                    <el-input-number v-model="formLabelAlign.consume" />
+                    <el-input v-model="name" />
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="add_activity(formLabelAlign)">添加</el-button>
+                    <el-button type="primary" @click="add_res_type(name)">添加</el-button>
                 </el-form-item>
             </el-form>
         </el-main>
-        <el-main v-else></el-main>
     </el-container>
 </template>
 
@@ -33,8 +28,13 @@ import { ref } from "vue"
 import { invoke } from "@tauri-apps/api/core"
 import { ElMessage, type FormItemProps, type FormProps } from 'element-plus'
 
-const add_activity = async (data: Form) => {
-    invoke("add_activity", { activity: data })
+
+const labelPosition = ref<FormProps['labelPosition']>('right')
+const itemLabelPosition = ref<FormItemProps['labelPosition']>('right')
+const name = ref<string>("")
+
+const add_res_type = (name: string) => {
+    invoke("add_res_type", { name: name })
         .then((res) => {
             const msg = res as string
             ElMessage.success({ message: msg })
@@ -45,17 +45,4 @@ const add_activity = async (data: Form) => {
         })
 }
 
-const labelPosition = ref<FormProps['labelPosition']>('right')
-const itemLabelPosition = ref<FormItemProps['labelPosition']>('right')
-const formLabelAlign = ref<Form>({
-    name: "",
-    num: 0,
-    consume: 0,
-})
-
-interface Form {
-    name: string
-    num: number
-    consume: number
-}
 </script>
